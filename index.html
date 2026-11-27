@@ -115,3 +115,28 @@ var _draw=draw;draw=function(){if(!TOK&&!SKIP){S='login'}else if(S=='login'){S='
 if('serviceWorker' in navigator){navigator.serviceWorker.register('/sw.js').catch(function(){})}
 draw();
 </script></body></html>
+<script>
+var HAS=false;
+try{var _p=JSON.parse(localStorage.getItem('gs_profile')||'null');if(_p&&_p.name){U=_p;HAS=true}}catch(e){}
+V.birth=function(){
+ var h=L=='hi';
+ return '<h2>'+(h?'अपना जन्म-विवरण दें':'Your birth details')+'</h2><div class="card">'+
+ '<label class="mu">'+(h?'नाम':'Name')+'</label><input id="bn" value="'+(HAS?U.name:'')+'">'+
+ '<label class="mu">'+(h?'जन्म तिथि':'Date of birth')+'</label><input id="bd" type="date" value="'+(HAS?U.dob:'')+'">'+
+ '<label class="mu">'+(h?'जन्म का सही समय':'Exact time of birth')+'</label><input id="bt" type="time" value="'+(HAS?U.tob:'')+'">'+
+ '<label class="mu">'+(h?'जन्म स्थान (शहर)':'Birthplace (city)')+'</label><input id="bp" value="'+(HAS?U.place:'')+'">'+
+ '<label class="mu">'+(h?'लिंग (वैकल्पिक)':'Gender (optional)')+'</label><select id="bg"><option value="">-</option><option value="F">'+(h?'महिला':'Female')+'</option><option value="M">'+(h?'पुरुष':'Male')+'</option><option value="O">'+(h?'अन्य':'Other')+'</option></select>'+
+ '<button class="pri" style="margin-top:8px" onclick="saveBirth()">'+(h?'सेव करें':'Save')+'</button><p class="mu" id="bm"></p></div>'};
+function saveBirth(){
+ var n=document.getElementById('bn').value.trim(),d=document.getElementById('bd').value,tm=document.getElementById('bt').value,pl=document.getElementById('bp').value.trim(),g=document.getElementById('bg').value;
+ if(!n||!d||!tm||!pl){document.getElementById('bm').textContent=(L=='hi'?'नाम, तारीख, समय और स्थान भरना ज़रूरी है':'Name, date, time and place are required');return}
+ U={name:n,dob:d,tob:tm,place:pl,gender:g};HAS=true;
+ try{localStorage.setItem('gs_profile',JSON.stringify(U))}catch(e){}
+ if(TOK){fetch('/v1/profiles',{method:'POST',headers:{'Content-Type':'application/json','Authorization':'Bearer '+TOK},body:JSON.stringify({name:n,dob:d,tob:tm,place:pl,gender:g})}).catch(function(){})}
+ go('home')}
+var _k=V.kundli;
+V.kundli=function(){return _k()+'<button class="btn" style="width:100%;margin-top:8px" onclick="HAS=false;go(\'birth\')">✎ '+(L=='hi'?'जन्म-विवरण बदलें':'Edit birth details')+'</button>'};
+var _d2=draw;
+draw=function(){if(TOK||SKIP){if(!HAS)S='birth'}_d2()};
+draw();
+  </script>
