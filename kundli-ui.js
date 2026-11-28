@@ -102,3 +102,75 @@ st.textContent='@media print{nav,.top,.noprint,.disc{display:none!important}:roo
 document.head.appendChild(st);
 draw();
 })();
+
+(function(){
+var SGN=[['Aries','मेष'],['Taurus','वृषभ'],['Gemini','मिथुन'],['Cancer','कर्क'],['Leo','सिंह'],['Virgo','कन्या'],['Libra','तुला'],['Scorpio','वृश्चिक'],['Sagittarius','धनु'],['Capricorn','मकर'],['Aquarius','कुंभ'],['Pisces','मीन']];
+var SL=['Ma','Ve','Me','Mo','Su','Me','Ve','Ma','Ju','Sa','Sa','Ju'];
+var PNM={Su:['Sun','सूर्य'],Mo:['Moon','चंद्र'],Ma:['Mars','मंगल'],Me:['Mercury','बुध'],Ju:['Jupiter','गुरु'],Ve:['Venus','शुक्र'],Sa:['Saturn','शनि'],Ra:['Rahu','राहु'],Ke:['Ketu','केतु']};
+var PT={Su:['authority, confidence and recognition','अधिकार, आत्मविश्वास और पहचान'],Mo:['emotions, public dealings and care','भावनाएँ, जनसंपर्क और देखभाल'],Ma:['energy, courage and drive','ऊर्जा, साहस और पहल'],Me:['communication, business sense and learning','संवाद, व्यापारिक समझ और सीखना'],Ju:['wisdom, growth and guidance','ज्ञान, विकास और मार्गदर्शन'],Ve:['relationships, comfort and the arts','संबंध, सुख और कला'],Sa:['discipline, patience and long-term effort','अनुशासन, धैर्य और दीर्घकालीन परिश्रम'],Ra:['ambition, unconventional paths and sudden change','महत्वाकांक्षा, अलग राह और अचानक बदलाव'],Ke:['detachment, research and inner focus','वैराग्य, शोध और आंतरिक ध्यान']};
+var HM={1:['self and vitality','स्वयं और जीवन-शक्ति'],2:['family and savings','परिवार और बचत'],4:['home, mind and learning foundations','घर, मन और शिक्षा की नींव'],5:['intellect and higher studies','बुद्धि और उच्च अध्ययन'],6:['daily work, service and wellness habits','दैनिक कार्य, सेवा और स्वास्थ्य की आदतें'],7:['partnership and marriage','साझेदारी और विवाह'],9:['fortune, higher learning and long journeys','भाग्य, उच्च शिक्षा और लंबी यात्राएँ'],10:['career and public standing','करियर और सामाजिक स्थान'],11:['gains and networks','लाभ और संपर्क'],12:['foreign lands and letting go','विदेश और त्याग']};
+var TP={career:{h:[10,6],n:['career','करियर']},marriage:{h:[7,2],n:['marriage and relationships','विवाह और संबंध']},finance:{h:[2,11],n:['finance','धन']},education:{h:[5,4],n:['education','शिक्षा']},travel:{h:[9,12],n:['travel','यात्रा']},health:{h:[1,6],n:['health and wellness','स्वास्थ्य और कल्याण']},general:{h:[1,5],n:['life in general','सामान्य जीवन']}};
+var RX={distress:/suicide|kill myself|end my life|want to die|आत्महत्या|मरना चाहत|जीना नहीं/i,career:/career|job|business|work|profession|promotion|नौकरी|करियर|व्यापार|कारोबार|रोज़गार|रोजगार/i,marriage:/marri|wedding|love|relationship|partner|spouse|विवाह|शादी|प्रेम|रिश्त|जीवनसाथी/i,finance:/money|finance|wealth|income|invest|धन|पैसा|पैसे|कमाई|निवेश/i,education:/educat|study|exam|school|college|student|शिक्षा|पढ़ाई|परीक्षा/i,travel:/travel|abroad|foreign|visa|यात्रा|विदेश/i,health:/health|wellness|sleep|स्वास्थ्य|सेहत|नींद/i,num:/numerolog|life path|अंकज्योतिष|मूलांक/i};
+function hi(){return L=='hi'}
+function i18(a){return a[hi()?1:0]}
+function red(n){while(n>9&&n!=11&&n!=22&&n!=33)n=String(n).split('').reduce(function(a,b){return a+ +b},0);return n}
+function red9(n){while(n>9)n=String(n).split('').reduce(function(a,b){return a+ +b},0);return n}
+function lt(s){return s.toUpperCase().replace(/[^A-Z]/g,'').split('').reduce(function(a,c){return a+((c.charCodeAt(0)-65)%9)+1},0)}
+var NI={1:['leadership, independence and initiative','नेतृत्व, स्वतंत्रता और पहल'],2:['cooperation, sensitivity and diplomacy','सहयोग, संवेदनशीलता और कूटनीति'],3:['creativity, expression and optimism','रचनात्मकता, अभिव्यक्ति और आशावाद'],4:['discipline, practicality and steadiness','अनुशासन, व्यावहारिकता और स्थिरता'],5:['freedom, curiosity and adaptability','स्वतंत्रता, जिज्ञासा और अनुकूलन'],6:['care, responsibility and harmony','देखभाल, ज़िम्मेदारी और सामंजस्य'],7:['reflection, study and inner search','चिंतन, अध्ययन और आत्म-खोज'],8:['ambition, management and material achievement','महत्वाकांक्षा, प्रबंधन और भौतिक उपलब्धि'],9:['compassion, idealism and completion','करुणा, आदर्श और पूर्णता'],11:['intuition and inspiration (master number)','अंतर्ज्ञान और प्रेरणा (मास्टर नंबर)'],22:['building on a large scale (master number)','बड़े स्तर पर निर्माण (मास्टर नंबर)'],33:['devoted service and teaching (master number)','समर्पित सेवा और शिक्षण (मास्टर नंबर)']};
+var NN='';
+V.num=function(){
+ var nm=NN||U.name,d=(U.dob||'').split('-').map(Number);
+ var ok=/[A-Za-z]/.test(nm);
+ var lp=red(red(d[0])+red(d[1])+red(d[2])),bn=red9(d[2]),first=nm.trim().split(/\s+/)[0]||'';
+ var dn=red(lt(nm)),na=red(lt(first));
+ var rows=[[hi()?'जीवन पथ संख्या':'Life Path',lp],[hi()?'भाग्य/अभिव्यक्ति संख्या':'Destiny / Expression',dn],[hi()?'जन्म संख्या (मूलांक)':'Birth Number',bn],[hi()?'नाम संख्या (पहला नाम)':'Name Number (first name)',na]];
+ return '<h2>'+t('num')+'</h2><div class="card"><label class="mu">'+(hi()?'पूरा नाम (अंग्रेज़ी अक्षरों में)':'Full name (English letters)')+'</label><input id="nmx" value="'+nm.replace(/"/g,'&quot;')+'"><div class="mu">'+(hi()?'जन्म तिथि: ':'Date of birth: ')+U.dob+'</div><button class="pri" style="margin-top:8px" onclick="NNset()">'+t('calc')+'</button>'+(ok?'':'<p class="mu">⚠ '+(hi()?'नाम अंग्रेज़ी में लिखें, तभी नाम की संख्या निकलेगी।':'Write the name in English letters to get name numbers.')+'</p>')+'</div>'+
+ '<div class="grid" style="grid-template-columns:1fr 1fr">'+rows.map(function(r){return '<div class="tile"><b>'+r[1]+'</b>'+r[0]+'</div>'}).join('')+'</div>'+
+ rows.map(function(r){return '<div class="card"><h3>'+r[0]+' '+r[1]+'</h3><p>'+(hi()?'अंकज्योतिष में यह संख्या परंपरागत रूप से ':'In numerology this number is traditionally linked with ')+i18(NI[r[1]])+(hi()?' से जोड़ी जाती है।':'.')+'</p></div>'}).join('')+
+ '<div class="mu">'+(hi()?'गणना पाइथागोरियन विधि से है। यह मनोरंजन और व्यक्तिगत मार्गदर्शन के लिए व्याख्या है।':'Calculated with the Pythagorean method. Interpretation is for entertainment and personal guidance.')+'</div>'};
+window.NNset=function(){NN=document.getElementById('nmx').value;draw()};
+var JK=null,JKK='',JL=false,JE=false;
+function kk(){return [U.dob,U.tob,U.place].join('|')}
+function ensure(cb){
+ if(JK&&JKK==kk())return cb(JK);
+ if(JL)return setTimeout(function(){ensure(cb)},700);
+ JL=true;var key=kk();
+ fetch('/v1/kundli',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({dob:U.dob,tob:U.tob,place:U.place})})
+ .then(function(r){return r.json()}).then(function(d){JL=false;if(d.ok){JK=d;JKK=key;cb(d)}else cb(null)}).catch(function(){JL=false;cb(null)})}
+function sn(i){return SGN[i][hi()?1:0]}
+function pl(id){return PNM[id][hi()?1:0]}
+function fd(s){return new Date(s).toLocaleDateString('en-IN',{day:'2-digit',month:'short',year:'numeric'})}
+function houseLine(d,h){
+ var sign=(d.lagna+h-1)%12,lord=SL[sign],lp=d.planets.filter(function(p){return p.id==lord})[0],occ=d.planets.filter(function(p){return p.house==h}).map(function(p){return pl(p.id)});
+ var s=hi()?'भाव '+h+' ('+i18(HM[h])+') '+sn(sign)+' राशि में है, जिसका स्वामी '+pl(lord)+' भाव '+lp.house+' में है।':'House '+h+' ('+i18(HM[h])+') falls in '+sn(sign)+', ruled by '+pl(lord)+', which sits in house '+lp.house+'.';
+ if(occ.length)s+=hi()?' यहाँ '+occ.join(', ')+' स्थित हैं।':' '+occ.join(', ')+(occ.length>1?' are':' is')+' placed here.';
+ return {t:s,lord:lord}}
+function answer(q,d){
+ var tp='general';
+ if(RX.distress.test(q))return hi()?'आपकी बात मैंने सुनी। अभी भविष्यवाणी का समय नहीं है। कृपया किसी भरोसेमंद व्यक्ति से बात करें या अपने शहर की हेल्पलाइन/डॉक्टर से तुरंत संपर्क करें। आप अकेली/अकेले नहीं हैं।':'I hear you. This is not a moment for predictions. Please talk to someone you trust or contact a local helpline or doctor right away. You are not alone.';
+ if(RX.num.test(q)){var d0=U.dob.split('-').map(Number);var lp=red(red(d0[0])+red(d0[1])+red(d0[2]));return (hi()?'आपकी जीवन पथ संख्या '+lp+' है, जिसे अंकज्योतिष में परंपरागत रूप से '+i18(NI[lp])+' से जोड़ा जाता है। पूरा विवरण अंकज्योतिष टैब में है।':'Your Life Path number is '+lp+', traditionally linked in numerology with '+i18(NI[lp])+'. Full details are in the Numerology tab.')}
+ ['career','marriage','finance','education','travel','health'].forEach(function(k){if(tp=='general'&&RX[k].test(q))tp=k});
+ var T=TP[tp],pre=hi()?'आपकी कुंडली के अनुसार, '+i18(T.n)+' के बारे में: ':'According to your astrological chart, regarding '+i18(T.n)+': ';
+ if(!d)return pre+(hi()?'कुंडली की गणना अभी नहीं हो पाई। कृपया जन्म-विवरण (शहर, राज्य) जाँचें और फिर पूछें।':'the chart could not be calculated right now. Please check your birth details (City, State) and ask again.');
+ var lines=[],lords=[];
+ T.h.forEach(function(h){var o=houseLine(d,h);lines.push(o.t);lords.push(o.lord)});
+ var lord=lords[0],o=pre+lines.join(' ')+' ';
+ o+=hi()?'परंपरा में '+pl(lord)+' को '+i18(PT[lord])+' से जोड़ा जाता है, इसलिए इस क्षेत्र में ये गुण दिख सकते हैं। ':'Traditionally '+pl(lord)+' is associated with '+i18(PT[lord])+', so these qualities may show up in this area. ';
+ var c=d.dasha.current;
+ if(c)o+=hi()?'अभी आप '+pl(c.maha)+' महादशा और '+pl(c.antar)+' अंतर्दशा में हैं (अंतर्दशा '+fd(c.antarEnd)+' तक)। ज्योतिष में '+pl(c.maha)+' को '+i18(PT[c.maha])+' से जोड़ा जाता है। ':'You are currently in the '+pl(c.maha)+' Mahadasha and '+pl(c.antar)+' Antardasha (Antardasha until '+fd(c.antarEnd)+'). Astrology traditionally links '+pl(c.maha)+' with '+i18(PT[c.maha])+'. ';
+ if(tp=='health')o+=hi()?'यह केवल सामान्य जीवन-शैली का ज्योतिषीय चिंतन है, चिकित्सीय सलाह नहीं। स्वास्थ्य के लिए डॉक्टर से मिलें। ':'This is only a general lifestyle reflection, not medical advice. Please consult a doctor for health concerns. ';
+ if(tp=='finance'||tp=='career')o+=hi()?'वित्तीय या पेशेवर निर्णय योग्य सलाहकार से परामर्श के बाद लें। ':'Please take financial or professional decisions after advice from a qualified professional. ';
+ o+=hi()?'सरल, परंपरागत उपाय: शांत मन से मंत्र-जप, रोज़ कुछ देर ध्यान, और ज़रूरतमंद की मदद। ये संकेत मात्र हैं, निश्चित भविष्यवाणी नहीं।':'Simple traditional practices: calm mantra chanting, a little daily meditation, and helping someone in need. These are indications only, not certain predictions.';
+ return o}
+function esc(s){return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/\n/g,'<br>')}
+V.ai=function(){
+ var chips=[['career',hi()?'करियर':'Career'],['marriage',hi()?'विवाह':'Marriage'],['finance',hi()?'धन':'Finance'],['education',hi()?'शिक्षा':'Education'],['travel',hi()?'यात्रा':'Travel'],['health',hi()?'स्वास्थ्य':'Health']];
+ return '<h2>🪔 '+t('ai')+'</h2><div class="row" style="flex-wrap:wrap;margin-bottom:6px">'+chips.map(function(c){return '<button class="btn" onclick="askQ(\''+(hi()?{career:'मेरा करियर कैसा रहेगा?',marriage:'विवाह के बारे में बताइए',finance:'धन के बारे में बताइए',education:'शिक्षा के बारे में बताइए',travel:'यात्रा के बारे में बताइए',health:'स्वास्थ्य के बारे में बताइए'}[c[0]]:{career:'Tell me about my career',marriage:'Tell me about marriage',finance:'Tell me about finance',education:'Tell me about education',travel:'Tell me about travel',health:'Tell me about health'}[c[0]])+'\')">'+c[1]+'</button>'}).join('')+'</div>'+
+ '<div class="card" id="chat" style="height:46vh;overflow:auto">'+(hist.length?'':'<div class="msg bot">'+(hi()?'नमस्ते '+U.name+'! आपकी कुंडली के आधार पर करियर, विवाह, धन, शिक्षा, यात्रा या स्वास्थ्य के बारे में पूछिए।':'Namaste '+U.name+'! Ask about career, marriage, finance, education, travel or health, based on your chart.')+'</div>')+hist.map(function(m){return '<div class="msg '+m[0]+'">'+m[1]+'</div>'}).join('')+'</div>'+
+ '<div class="row"><input id="q" placeholder="'+t('ask')+'" onkeydown="if(event.key==\'Enter\')sendQ()"><button class="btn" onclick="sendQ()">'+t('send')+'</button></div><div class="mu">'+(hi()?'जवाब आपकी असली कुंडली की गणना और पारंपरिक नियमों पर आधारित हैं। यह निश्चित भविष्यवाणी नहीं है।':'Replies use your calculated chart and traditional rules. They are interpretations, not certain predictions.')+'</div>'};
+window.askQ=function(q){document.getElementById('q').value=q;sendQ()};
+window.sendQ=function(){
+ var el=document.getElementById('q'),q=el.value.trim();if(!q)return;
+ hist.push(['me',esc(q)],['bot','…']);var i=hist.length-1;draw();
+ ensure(function(d){hist[i]=['bot',esc(answer(q,d))];draw()})};
+})();
