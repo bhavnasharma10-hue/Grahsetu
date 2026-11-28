@@ -130,3 +130,17 @@ module.exports = function (app) {
     } catch (e) { console.error('kundli error', e); res.status(500).json({ error: 'calculation failed' }); }
   });
 };
+geocode = async function (place) {
+  const k = place.toLowerCase();
+  if (geoCache.has(k)) return geoCache.get(k);
+  const parts = place.split(',').map(s => s.trim()).filter(Boolean);
+  const name = parts[0] || place, hint = (parts[1] || '').toLowerCase();
+  const r = await fetch('https://geocoding-api.open-meteo.com/v1/search?count=10&language=en&format=json&name=' + encodeURIComponent(name));
+  const j = await r.json();
+  const list = j.results || [];
+  const g = (hint && list.find(x => x.country_code === 'IN' && String(x.admin1 || '').toLowerCase().includes(hint)))
+    || list.find(x => x.country_code === 'IN') || list[0];
+  if (!g) return null;
+  const out = { lat: g.latitude, lon: g.longitude, tz: g.timezone || 'Asia/Kolkata', label: [g.name, g.admin1, g.country].filter(Boolean).join(', ') };
+  geoCache.set(k, out); return out;
+};
