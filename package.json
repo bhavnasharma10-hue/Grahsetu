@@ -6,6 +6,7 @@
   "scripts": { "start": "node server.js" },
   "engines": { "node": ">=18" },
   "dependencies": {
+    "astronomy-engine": "^2.1.19",
     "better-sqlite3": "^11.0.0",
     "cors": "^2.8.5",
     "express": "^4.19.2",
