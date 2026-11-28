@@ -174,3 +174,72 @@ window.sendQ=function(){
  hist.push(['me',esc(q)],['bot','…']);var i=hist.length-1;draw();
  ensure(function(d){hist[i]=['bot',esc(answer(q,d))];draw()})};
 })();
+(function(){
+var RAW='https://raw.githubusercontent.com/bhavnasharma10-hue/Grahsetu/main/pandits.json';
+var PD=null,PE=false,VID=null;
+function hi(){return L=='hi'}
+function esc(s){return String(s==null?'':s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/"/g,'&quot;')}
+function loadP(){
+ if(PD||PE)return;PE=true;
+ fetch(RAW+'?t='+Date.now()).then(function(r){return r.json()}).then(function(a){PD=Array.isArray(a)?a.filter(function(p){return p&&p.verified===true}):[];draw()}).catch(function(){PD=[];draw()})}
+function digits(s){return String(s||'').replace(/\D/g,'')}
+function msg(p){return hi()?'नमस्ते '+p.name+', मैं Grahsetu ऐप से '+U.name+' बोल रही/रहा हूँ। जन्म तिथि: '+U.dob+', समय: '+U.tob+', स्थान: '+U.place+'। मुझे परामर्श चाहिए।':'Namaste '+p.name+', this is '+U.name+' from the Grahsetu app. Date of birth: '+U.dob+', time: '+U.tob+', place: '+U.place+'. I would like a consultation.'}
+window.startVideo=function(i){
+ var p=PD[i],room='Grahsetu-'+Math.random().toString(36).slice(2,12);
+ VID={i:i,url:'https://meet.jit.si/'+room};draw()};
+window.closeVideo=function(){VID=null;draw()};
+V.consult=function(){
+ loadP();
+ var o='<h2>'+t('consult')+'</h2><div class="card"><div class="row"><div style="font-size:30px">🪔</div><div style="flex:1"><b>'+(hi()?'AI ज्योतिष (मुफ़्त)':'AI Jyotish (free)')+'</b><div class="mu">'+(hi()?'आपकी कुंडली के आधार पर चैट':'Chat based on your chart')+'</div></div></div><button class="pri" style="margin-top:8px" onclick="go(\'ai\')">'+(hi()?'चैट करें':'Chat')+'</button></div>';
+ if(VID&&PD&&PD[VID.i]){var p=PD[VID.i],ph=digits(p.phone);
+  o+='<div class="card"><h3>🎥 '+esc(p.name)+'</h3><p class="mu">'+(hi()?'वीडियो रूम तैयार है। पहले पंडित जी को लिंक भेजिए, फिर रूम खोलिए। फ़ोन में Jitsi Meet ऐप इंस्टॉल करनी पड़ सकती है।':'Your video room is ready. Send the link to the pandit first, then open the room. You may need the Jitsi Meet app on your phone.')+'</p>'+
+  (ph.length>=10?'<a class="pri" style="display:block;text-align:center;text-decoration:none;margin-bottom:8px" target="_blank" rel="noopener" href="https://wa.me/'+ph+'?text='+encodeURIComponent(msg(p)+'\n'+(hi()?'वीडियो लिंक: ':'Video link: ')+VID.url)+'">'+(hi()?'1. पंडित जी को WhatsApp पर लिंक भेजें':'1. Send link to pandit on WhatsApp')+'</a>':'<p class="mu">⚠ '+(hi()?'पंडित का नंबर जुड़ा नहीं है।':'Pandit number is not added.')+'</p>')+
+  '<a class="pri" style="display:block;text-align:center;text-decoration:none;margin-bottom:8px" target="_blank" rel="noopener" href="'+VID.url+'">'+(hi()?'2. वीडियो रूम खोलें':'2. Open video room')+'</a><button class="btn" onclick="closeVideo()">✕</button></div>'}
+ o+='<div class="mu">✔ '+(hi()?'केवल सत्यापित पंडित':'Verified pandits only')+'</div>';
+ if(PD===null)o+='<div class="card">⏳ …</div>';
+ else if(!PD.length)o+='<div class="card">'+(hi()?'अभी कोई सत्यापित पंडित उपलब्ध नहीं है।':'No verified pandit is available right now.')+'</div>';
+ else PD.forEach(function(p,i){var ph=digits(p.phone),ok=ph.length>=10;
+  o+='<div class="card"><div class="row"><div style="font-size:30px">🧘</div><div style="flex:1"><b>'+esc(p.name)+'</b> ✔<div class="mu">'+esc(p.exp)+' '+(hi()?'वर्ष':'yrs')+' · '+esc(p.lang)+' · '+esc(p.spec)+'</div><div class="mu">₹'+esc(p.price)+'/'+(hi()?'मिनट':'min')+' · '+(p.online?'🟢 Online':'⚪ Offline')+'</div></div></div>'+
+  (ok?'<div class="row" style="margin-top:8px"><a class="btn" style="text-decoration:none" target="_blank" rel="noopener" href="https://wa.me/'+ph+'?text='+encodeURIComponent(msg(p))+'">💬 WhatsApp</a><a class="btn" style="text-decoration:none" href="tel:+'+ph+'">📞 '+(hi()?'कॉल':'Call')+'</a><button class="btn" onclick="startVideo('+i+')">🎥 '+(hi()?'वीडियो':'Video')+'</button></div>':'<p class="mu">⚠ '+(hi()?'इस पंडित का नंबर अभी जुड़ा नहीं है।':'This pandit\'s number has not been added yet.')+'</p>')+'</div>'});
+ o+='<div class="mu">'+(hi()?'चैट खोलने पर आपका नाम और जन्म-विवरण संदेश में अपने आप लिखा आएगा; भेजना आपके हाथ में है। शुल्क पंडित जी से सीधे तय करें (ऐप में भुगतान बाद में जुड़ेगा)।':'Opening chat pre-fills your name and birth details in the message; sending is up to you. Agree the fee directly with the pandit (in-app payment will come later).')+'</div>';
+ return o};
+
+var TA=[
+['The Fool','द फूल','🎒','new beginnings, trust, a leap of faith','नई शुरुआत, भरोसा, साहसिक कदम','hesitation, recklessness, poor planning','हिचकिचाहट, जल्दबाज़ी, योजना की कमी'],
+['The Magician','द मैजिशियन','🪄','resourcefulness, focus, using your skills','साधन-संपन्नता, एकाग्रता, कौशल का उपयोग','scattered energy, unused talent','बिखरी ऊर्जा, अनुपयोगी प्रतिभा'],
+['The High Priestess','हाई प्रीस्टेस','🌙','intuition, quiet knowing, inner voice','अंतर्ज्ञान, मौन समझ, भीतर की आवाज़','ignoring intuition, hidden matters','अंतर्ज्ञान की अनदेखी, छिपी बातें'],
+['The Empress','द एम्प्रेस','🌸','nurturing, abundance, creativity','पालन-पोषण, समृद्धि, रचनात्मकता','overgiving, creative block','अति-देना, रचनात्मक ठहराव'],
+['The Emperor','द एम्परर','👑','structure, authority, stability','व्यवस्था, अधिकार, स्थिरता','rigidity, control issues','कठोरता, नियंत्रण की प्रवृत्ति'],
+['The Hierophant','द हायरोफैंट','📿','tradition, guidance, shared values','परंपरा, मार्गदर्शन, साझा मूल्य','questioning rules, breaking convention','नियमों पर प्रश्न, लीक से हटना'],
+['The Lovers','द लवर्स','💞','harmony, choices from the heart, partnership','सामंजस्य, दिल से चुनाव, साझेदारी','misalignment, hard choices','असंतुलन, कठिन चुनाव'],
+['The Chariot','द चैरियट','🐎','determination, momentum, willpower','दृढ़ निश्चय, गति, इच्छाशक्ति','lack of direction, scattered effort','दिशा की कमी, बिखरे प्रयास'],
+['Strength','स्ट्रेंथ','🦁','courage, patience, gentle strength','साहस, धैर्य, कोमल शक्ति','self-doubt, low energy','आत्म-संदेह, कम ऊर्जा'],
+['The Hermit','द हर्मिट','🏮','reflection, solitude, seeking wisdom','चिंतन, एकांत, ज्ञान की खोज','isolation, avoiding reflection','अकेलापन, चिंतन से बचना'],
+['Wheel of Fortune','व्हील ऑफ फॉर्च्यून','🎡','cycles, change, turning points','चक्र, बदलाव, मोड़','resistance to change, setbacks','बदलाव का विरोध, अड़चनें'],
+['Justice','जस्टिस','⚖️','fairness, honesty, cause and effect','न्याय, ईमानदारी, कर्म-फल','bias, avoiding accountability','पक्षपात, जवाबदेही से बचना'],
+['The Hanged Man','द हैंग्ड मैन','🙃','pause, new perspective, surrender','ठहराव, नया दृष्टिकोण, समर्पण','stalling, needless sacrifice','टालमटोल, व्यर्थ त्याग'],
+['Death','डेथ','🌅','an ending that clears space, transformation (not literal death)','समाप्ति जो जगह बनाती है, परिवर्तन (शाब्दिक मृत्यु नहीं)','clinging to the past','अतीत से चिपके रहना'],
+['Temperance','टेम्परेंस','🌊','balance, moderation, patience','संतुलन, संयम, धैर्य','excess, impatience','अति, अधीरता'],
+['The Devil','द डेविल','⛓️','attachments, binding habits, temptation','आसक्ति, बाँधने वाली आदतें, प्रलोभन','breaking free, reclaiming power','मुक्ति, अपनी शक्ति वापस पाना'],
+['The Tower','द टावर','⚡','sudden change, truth revealed, rebuilding','अचानक बदलाव, सच का सामने आना, नव-निर्माण','avoiding change, delayed upheaval','बदलाव से बचना, टला हुआ उथल-पुथल'],
+['The Star','द स्टार','⭐','hope, healing, renewal','आशा, उपचार, नवीनीकरण','discouragement, lost faith','निराशा, भरोसे की कमी'],
+['The Moon','द मून','🌕','uncertainty, dreams, intuition needing care','अनिश्चितता, सपने, सावधानी माँगता अंतर्ज्ञान','clarity returning, confusion lifting','स्पष्टता लौटना, उलझन छँटना'],
+['The Sun','द सन','☀️','joy, vitality, success','आनंद, जीवंतता, सफलता','temporary clouds, dimmed optimism','अस्थायी बादल, कम होता उत्साह'],
+['Judgement','जजमेंट','📯','reflection, awakening, answering a calling','आत्म-मूल्यांकन, जागृति, पुकार का उत्तर','self-doubt, ignoring the call','आत्म-संदेह, पुकार की अनदेखी'],
+['The World','द वर्ल्ड','🌍','completion, wholeness, achievement','पूर्णता, समग्रता, उपलब्धि','unfinished business, almost there','अधूरा काम, मंज़िल के क़रीब']];
+var TS=null;
+function rnd(n){var a=new Uint32Array(1);crypto.getRandomValues(a);return a[0]%n}
+window.drawTarot=function(n){
+ var used={},c=[];
+ while(c.length<n){var i=rnd(22);if(!used[i]){used[i]=1;c.push({i:i,rev:rnd(2)==1})}}
+ TS={n:n,c:c};draw()};
+V.tarot=function(){
+ var pos=hi()?['अतीत','वर्तमान','भविष्य']:['Past','Present','Future'];
+ var o='<h2>🃏 '+(hi()?'टैरो कार्ड':'Tarot')+'</h2><div class="card"><p class="mu">'+(hi()?'मन में अपना सवाल सोचिए, फिर कार्ड चुनिए।':'Think of your question, then draw.')+'</p><div class="row"><button class="pri" onclick="drawTarot(1)">'+(hi()?'आज का कार्ड':'Card of the day')+'</button><button class="pri" onclick="drawTarot(3)">'+(hi()?'3 कार्ड':'3 cards')+'</button></div></div>';
+ if(TS)TS.c.forEach(function(x,k){var d=TA[x.i];
+  o+='<div class="card" style="text-align:center">'+(TS.n==3?'<div class="tag">'+pos[k]+'</div>':'')+'<div style="font-size:64px;line-height:1.2;'+(x.rev?'transform:rotate(180deg);display:inline-block':'')+'">'+d[2]+'</div><h3 style="margin-top:6px">'+d[hi()?1:0]+'</h3><div class="tag">'+(x.rev?(hi()?'उल्टा':'Reversed'):(hi()?'सीधा':'Upright'))+'</div><p>'+(hi()?'परंपरा में इसे ':'Traditionally linked with ')+d[x.rev?(hi()?6:5):(hi()?4:3)]+(hi()?' से जोड़ा जाता है।':'.')+'</p></div>'});
+ if(TS)o+='<div class="mu">'+(hi()?'टैरो चिंतन का एक साधन है, भविष्य की निश्चित भविष्यवाणी नहीं। कार्ड के अर्थ पर ख़ुद सोचिए और अपने फ़ैसले सोच-समझकर लीजिए।':'Tarot is a tool for reflection, not a certain prediction. Think about what the cards mean to you and make your own decisions carefully.')+'</div>';
+ return o};
+var _h4=V.home;
+V.home=function(){return _h4()+'<div class="card row" onclick="go(\'tarot\')" style="cursor:pointer"><div style="font-size:32px">🃏</div><div style="flex:1"><b>'+(hi()?'टैरो कार्ड':'Tarot')+'</b><div class="mu">'+(hi()?'आज का कार्ड निकालें':'Draw your card')+'</div></div></div>'};
+})();
