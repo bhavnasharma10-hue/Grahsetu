@@ -243,3 +243,58 @@ V.tarot=function(){
 var _h4=V.home;
 V.home=function(){return _h4()+'<div class="card row" onclick="go(\'tarot\')" style="cursor:pointer"><div style="font-size:32px">🃏</div><div style="flex:1"><b>'+(hi()?'टैरो कार्ड':'Tarot')+'</b><div class="mu">'+(hi()?'आज का कार्ड निकालें':'Draw your card')+'</div></div></div>'};
 })();
+(function(){
+function hi(){return L=='hi'}
+function pad(n){return (n<10?'0':'')+n}
+function opts(a,b,sel,f){var o='<option value="">--</option>';for(var i=a;i<=b;i++)o+='<option value="'+i+'"'+(sel===i?' selected':'')+'>'+(f?f(i):i)+'</option>';return o}
+function ea(s){return String(s==null?'':s).replace(/&/g,'&amp;').replace(/"/g,'&quot;').replace(/</g,'&lt;')}
+var PS=[],ptm=null;
+V.birth=function(){
+ var h24=null,mi=null;
+ if(HAS&&U.tob){var q=U.tob.split(':');h24=+q[0];mi=+q[1]}
+ var ap=h24==null?'':(h24>=12?'PM':'AM'),h12=h24==null?null:(h24%12||12);
+ var g=HAS?U.gender:'';
+ return '<h2>'+(hi()?'अपना जन्म-विवरण दें':'Your birth details')+'</h2><div class="card">'+
+ '<label class="mu">'+(hi()?'नाम':'Name')+'</label><input id="bn" value="'+ea(HAS?U.name:'')+'">'+
+ '<label class="mu">'+(hi()?'जन्म तिथि':'Date of birth')+'</label><input id="bd" type="date" value="'+ea(HAS?U.dob:'')+'">'+
+ '<label class="mu">'+(hi()?'जन्म का सही समय':'Exact time of birth')+'</label><div class="row"><select id="bh">'+opts(1,12,h12)+'</select><select id="bm2">'+opts(0,59,mi,pad)+'</select><select id="bap"><option value="">--</option><option value="AM"'+(ap=='AM'?' selected':'')+'>AM</option><option value="PM"'+(ap=='PM'?' selected':'')+'>PM</option></select></div>'+
+ '<label class="mu">'+(hi()?'जन्म स्थान (शहर)':'Birthplace (city)')+'</label><input id="bp" autocomplete="off" autocapitalize="words" placeholder="Jalgaon, Maharashtra" oninput="placeSug()" value="'+ea(HAS?U.place:'')+'"><div id="psug"></div><div class="mu">'+(hi()?'अंग्रेज़ी में शहर का नाम लिखें, नीचे आए सुझाव पर टैप करें। गाँव न मिले तो पास का बड़ा शहर चुनें।':'Type the city in English and tap a suggestion below. If your village is not found, pick the nearest big city.')+'</div>'+
+ '<label class="mu">'+(hi()?'लिंग (वैकल्पिक)':'Gender (optional)')+'</label><select id="bg"><option value="">-</option><option value="F"'+(g=='F'?' selected':'')+'>'+(hi()?'महिला':'Female')+'</option><option value="M"'+(g=='M'?' selected':'')+'>'+(hi()?'पुरुष':'Male')+'</option><option value="O"'+(g=='O'?' selected':'')+'>'+(hi()?'अन्य':'Other')+'</option></select>'+
+ '<button class="pri" id="bsave" style="margin-top:8px" onclick="saveBirth()">'+(hi()?'सेव करें':'Save')+'</button><p class="mu" id="bmsg" style="color:#d9534f"></p></div>'};
+function bmsg(s){var e=document.getElementById('bmsg');if(e)e.textContent=s||''}
+window.placeSug=function(){
+ clearTimeout(ptm);
+ ptm=setTimeout(function(){
+  var v=document.getElementById('bp').value.split(',')[0].trim(),box=document.getElementById('psug');
+  if(v.length<2){box.innerHTML='';return}
+  fetch('https://geocoding-api.open-meteo.com/v1/search?count=8&language=en&format=json&name='+encodeURIComponent(v))
+  .then(function(r){return r.json()}).then(function(j){
+   var l=(j.results||[]).slice().sort(function(a,b){return (b.country_code=='IN')-(a.country_code=='IN')}).slice(0,6);
+   PS=l.map(function(x){return (x.country_code=='IN'?[x.name,x.admin1]:[x.name,x.country]).filter(Boolean).join(', ')});
+   var b2=document.getElementById('psug');if(!b2)return;
+   b2.innerHTML=PS.map(function(s,i){return '<button class="btn" style="display:block;width:100%;text-align:left;margin:3px 0" onclick="pickPlace('+i+')">📍 '+ea(s)+'</button>'}).join('');
+  }).catch(function(){})
+ },400)};
+window.pickPlace=function(i){document.getElementById('bp').value=PS[i];document.getElementById('psug').innerHTML=''};
+window.saveBirth=function(){
+ var n=document.getElementById('bn').value.trim(),d=document.getElementById('bd').value,
+ h=document.getElementById('bh').value,m=document.getElementById('bm2').value,ap=document.getElementById('bap').value,
+ pl=document.getElementById('bp').value.trim(),g=document.getElementById('bg').value;
+ if(!n)return bmsg(hi()?'नाम लिखिए':'Enter your name');
+ if(!d)return bmsg(hi()?'जन्म तिथि चुनिए':'Choose date of birth');
+ if(!h||m===''||!ap)return bmsg(hi()?'जन्म का समय चुनिए (घंटा, मिनट और AM/PM)':'Choose time of birth (hour, minute and AM/PM)');
+ if(!pl)return bmsg(hi()?'जन्म स्थान लिखिए':'Enter birthplace');
+ var h24=(+h%12)+(ap=='PM'?12:0),tm=pad(h24)+':'+pad(+m);
+ var btn=document.getElementById('bsave');btn.disabled=true;bmsg(hi()?'जन्म स्थान जाँच रहे हैं…':'Checking birthplace…');
+ function done(){
+  U={name:n,dob:d,tob:tm,place:pl,gender:g};HAS=true;
+  try{localStorage.setItem('gs_profile',JSON.stringify(U))}catch(e){}
+  if(TOK){fetch('/v1/profiles',{method:'POST',headers:{'Content-Type':'application/json','Authorization':'Bearer '+TOK},body:JSON.stringify({name:n,dob:d,tob:tm,place:pl,gender:g})}).catch(function(){})}
+  go('home')}
+ fetch('https://geocoding-api.open-meteo.com/v1/search?count=1&language=en&format=json&name='+encodeURIComponent(pl.split(',')[0].trim()))
+ .then(function(r){return r.json()}).then(function(j){
+  if(j&&j.results&&j.results.length)done();
+  else{btn.disabled=false;bmsg(hi()?'यह शहर नहीं मिला। अंग्रेज़ी में लिखें या पास का बड़ा शहर चुनें।':'City not found. Write it in English or choose the nearest big city.')}
+ }).catch(function(){done()})};
+draw();
+})();
