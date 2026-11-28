@@ -298,3 +298,83 @@ window.saveBirth=function(){
  }).catch(function(){done()})};
 draw();
 })();
+(function(){
+function hi(){return L=='hi'}
+function i18(a){return a[hi()?1:0]}
+function red9(n){while(n>9)n=String(n).split('').reduce(function(a,b){return a+ +b},0);return n}
+function redM(n){while(n>9&&n!=11&&n!=22&&n!=33)n=String(n).split('').reduce(function(a,b){return a+ +b},0);return n}
+function lt(s){return s.toUpperCase().replace(/[^A-Z]/g,'').split('').reduce(function(a,c){return a+((c.charCodeAt(0)-65)%9)+1},0)}
+var KW=[null,['start','शुरुआत'],['patience','धैर्य'],['expression','अभिव्यक्ति'],['work','परिश्रम'],['change','बदलाव'],['care','देखभाल'],['reflection','चिंतन'],['results','परिणाम'],['closure','समापन']];
+var PY=[null,
+[['starting new things and taking initiative','नई शुरुआत और पहल'],['avoid rushing or acting alone without planning','बिना योजना जल्दबाज़ी या अकेले फ़ैसले से बचें'],['make a clear plan and begin one important task','एक स्पष्ट योजना बनाकर एक अहम काम शुरू करें']],
+[['patience, partnerships and cooperation','धैर्य, साझेदारी और सहयोग'],['avoid over-sensitivity and indecision','अति-संवेदनशीलता और अनिर्णय से बचें'],['listen more and nurture one key relationship','ज़्यादा सुनें और एक अहम रिश्ते को समय दें']],
+[['creativity, communication and social life','रचनात्मकता, संवाद और मेल-जोल'],['avoid scattering energy or careless words','ऊर्जा बिखेरने और लापरवाह बोल से बचें'],['share your ideas through writing or speaking','लिखकर या बोलकर अपने विचार साझा करें']],
+[['building foundations, discipline and health routines','नींव बनाना, अनुशासन और स्वास्थ्य की दिनचर्या'],['avoid rigidity and overwork','कठोरता और अति-काम से बचें'],['set a steady daily routine and finish pending work','नियमित दिनचर्या बनाएँ और अधूरे काम पूरे करें']],
+[['change, movement and new experiences','बदलाव, गतिशीलता और नए अनुभव'],['avoid impulsive decisions and restlessness','आवेग और बेचैनी में फ़ैसले से बचें'],['stay flexible, but check facts before big changes','लचीले रहें, पर बड़े बदलाव से पहले तथ्य जाँचें']],
+[['family, home and responsibilities','परिवार, घर और ज़िम्मेदारियाँ'],['avoid over-giving and worrying for others','दूसरों के लिए अति-चिंता और अति-देने से बचें'],['balance care for others with care for yourself','दूसरों और अपनी देखभाल में संतुलन रखें']],
+[['reflection, learning and inner growth','चिंतन, सीखना और आंतरिक विकास'],['avoid isolation and overthinking','अकेलेपन और अति-सोच से बचें'],['set aside quiet time and learn something new','शांत समय निकालें और कुछ नया सीखें']],
+[['career, finances and positions of authority','करियर, धन-संबंधी विषय और अधिकार'],['avoid pressure, ego and risky money moves','दबाव, अहंकार और जोखिम भरे धन-फ़ैसलों से बचें'],['plan finances carefully and take professional advice','वित्त की योजना सोच-समझकर बनाएँ और विशेषज्ञ की सलाह लें']],
+[['completion, letting go and service','समापन, छोड़ना और सेवा'],['avoid clinging to the past or launching big new ventures','अतीत से चिपकने या बड़ी नई शुरुआत से बचें'],['finish old tasks, forgive, and help someone in need','पुराने काम पूरे करें, क्षमा करें और ज़रूरतमंद की मदद करें']]];
+var NP=[null,
+[['Sun','सूर्य'],['Sunday','रविवार'],['gold, orange','सुनहरा, नारंगी'],'ॐ सूर्याय नमः',['confidence and self-expression','आत्मविश्वास और स्वयं को व्यक्त करना'],['speak up in small situations and lead one small task','छोटे अवसरों पर अपनी बात रखें और एक छोटा काम नेतृत्व से करें']],
+[['Moon','चंद्र'],['Monday','सोमवार'],['white, cream','सफ़ेद, क्रीम'],'ॐ सोमाय नमः',['emotional balance and sensitivity','भावनात्मक संतुलन और संवेदनशीलता'],['keep a calm evening routine and talk about feelings','शांत शाम की दिनचर्या रखें और भावनाओं पर बात करें']],
+[['Jupiter','गुरु'],['Thursday','गुरुवार'],['yellow','पीला'],'ॐ बृहस्पतये नमः',['creativity and expression','रचनात्मकता और अभिव्यक्ति'],['write or draw a little every day and respect your teachers','रोज़ थोड़ा लिखें या चित्र बनाएँ और गुरुजनों का सम्मान करें']],
+[['Rahu','राहु'],['Saturday','शनिवार'],['blue, grey','नीला, स्लेटी'],'ॐ रां राहवे नमः',['practical discipline and order','व्यावहारिक अनुशासन और व्यवस्था'],['keep a simple daily schedule and a tidy space','सरल दिनचर्या और व्यवस्थित जगह रखें']],
+[['Mercury','बुध'],['Wednesday','बुधवार'],['green','हरा'],'ॐ बुं बुधाय नमः',['adaptability and communication','अनुकूलन और संवाद'],['read daily and practise clear, calm communication','रोज़ पढ़ें और स्पष्ट, शांत संवाद का अभ्यास करें']],
+[['Venus','शुक्र'],['Friday','शुक्रवार'],['white, light pink','सफ़ेद, हल्का गुलाबी'],'ॐ शुं शुक्राय नमः',['harmony in relationships and home','रिश्तों और घर में सामंजस्य'],['spend quality time with family and keep surroundings clean','परिवार के साथ समय बिताएँ और आस-पास स्वच्छता रखें']],
+[['Ketu','केतु'],['Tuesday','मंगलवार'],['light grey, sea green','हल्का स्लेटी, समुद्री हरा'],'ॐ कें केतवे नमः',['reflection and inner calm','चिंतन और आंतरिक शांति'],['practise 10 minutes of silent meditation daily','रोज़ 10 मिनट मौन ध्यान करें']],
+[['Saturn','शनि'],['Saturday','शनिवार'],['dark blue, black','गहरा नीला, काला'],'ॐ शं शनैश्चराय नमः',['patience and responsibility','धैर्य और ज़िम्मेदारी'],['keep promises, be punctual and respect people who work for you','वादे निभाएँ, समय के पाबंद रहें और काम करने वालों का सम्मान करें']],
+[['Mars','मंगल'],['Tuesday','मंगलवार'],['red, maroon','लाल, मरून'],'ॐ भौमाय नमः',['energy, courage and compassion','ऊर्जा, साहस और करुणा'],['do regular light exercise and help someone in need','नियमित हल्का व्यायाम करें और ज़रूरतमंद की मदद करें']]];
+var NI={1:['leadership, independence and initiative','नेतृत्व, स्वतंत्रता और पहल'],2:['cooperation, sensitivity and diplomacy','सहयोग, संवेदनशीलता और कूटनीति'],3:['creativity, expression and optimism','रचनात्मकता, अभिव्यक्ति और आशावाद'],4:['discipline, practicality and steadiness','अनुशासन, व्यावहारिकता और स्थिरता'],5:['freedom, curiosity and adaptability','स्वतंत्रता, जिज्ञासा और अनुकूलन'],6:['care, responsibility and harmony','देखभाल, ज़िम्मेदारी और सामंजस्य'],7:['reflection, study and inner search','चिंतन, अध्ययन और आत्म-खोज'],8:['ambition, management and material achievement','महत्वाकांक्षा, प्रबंधन और भौतिक उपलब्धि'],9:['compassion, idealism and completion','करुणा, आदर्श और पूर्णता'],11:['intuition and inspiration (master number)','अंतर्ज्ञान और प्रेरणा (मास्टर नंबर)'],22:['building on a large scale (master number)','बड़े स्तर पर निर्माण (मास्टर नंबर)'],33:['devoted service and teaching (master number)','समर्पित सेवा और शिक्षण (मास्टर नंबर)']};
+function dp(){var d=(U.dob||'').split('-').map(Number);return {y:d[0],m:d[1],d:d[2]}}
+function pyear(y){var p=dp();return red9(red9(p.d)+red9(p.m)+red9(y))}
+function core(){
+ var p=dp(),digs=(U.dob||'').replace(/-/g,'').split('').map(Number);
+ var mulank=red9(p.d),bhagyank=red9(digs.reduce(function(a,b){return a+b},0));
+ var cnt={};for(var i=1;i<=9;i++)cnt[i]=0;
+ digs.forEach(function(x){if(x>0)cnt[x]++});cnt[mulank]++;cnt[bhagyank]++;
+ return {mulank:mulank,bhagyank:bhagyank,cnt:cnt,life:redM(redM(p.d)+redM(p.m)+redM(red9(p.y)==p.y?p.y:redM(p.y))),dest:redM(lt(U.name||'')),first:redM(lt((U.name||'').trim().split(/\s+/)[0]||''))}}
+function luckyHtml(c){
+ var a=NP[c.mulank],b=NP[c.bhagyank];
+ return '<div class="card"><h3>'+(hi()?'आपके शुभ संकेत (परंपरागत)':'Your lucky indicators (traditional)')+'</h3><table>'+[
+  [hi()?'मूलांक / भाग्यांक':'Mulank / Bhagyank',c.mulank+' / '+c.bhagyank],
+  [hi()?'ग्रह':'Planets',i18(a[0])+' / '+i18(b[0])],
+  [hi()?'शुभ दिन':'Lucky days',i18(a[1])+', '+i18(b[1])],
+  [hi()?'शुभ रंग':'Lucky colours',i18(a[2])+'; '+i18(b[2])],
+  [hi()?'मंत्र':'Mantras',a[3]+' · '+b[3]]
+ ].map(function(r){return '<tr><td>'+r[0]+'</td><td><b>'+r[1]+'</b></td></tr>'}).join('')+'</table><p class="mu">'+(hi()?'परंपराओं में थोड़ा अंतर होता है। मंत्र शांत मन से, अपनी श्रद्धा अनुसार करें।':'Traditions differ slightly. Chant mantras calmly and according to your own faith.')+'</p></div>'}
+function loshuHtml(c){
+ var order=[4,9,2,3,5,7,8,1,6],o='<div class="card"><h3>'+(hi()?'लो शू ग्रिड':'Lo Shu grid')+'</h3><div style="display:grid;grid-template-columns:repeat(3,1fr);gap:6px;max-width:260px;margin:auto">';
+ order.forEach(function(n){var k=c.cnt[n];o+='<div style="border:1px solid var(--bd);border-radius:10px;height:62px;display:flex;align-items:center;justify-content:center;font-size:'+(k>2?'17':'22')+'px;font-weight:700;color:'+(k?'var(--ac)':'var(--mu)')+'">'+(k?new Array(k+1).join(n):'·')+'</div>'});
+ o+='</div><p class="mu">'+(hi()?'ग्रिड जन्म तिथि के अंकों, मूलांक और भाग्यांक से बना है। खाली घर वे अंक हैं जो नहीं आए।':'The grid uses your birth-date digits, Mulank and Bhagyank. Empty cells are numbers that do not appear.')+'</p></div>';
+ var miss=[],rep=[];for(var n=1;n<=9;n++){if(!c.cnt[n])miss.push(n);else if(c.cnt[n]>=3)rep.push(n)}
+ o+='<div class="card"><h3>'+(hi()?'ग्रिड का सार और उपाय':'Grid summary and remedies')+'</h3>';
+ if(miss.length)miss.forEach(function(n){o+='<p>• <b>'+n+'</b> '+(hi()?'अनुपस्थित: परंपरा में '+i18(NP[n][4])+' पर ध्यान देने की सलाह दी जाती है। सरल अभ्यास: ':'missing: traditionally suggests paying attention to '+i18(NP[n][4])+'. Simple practice: ')+i18(NP[n][5])+'.</p>'});
+ else o+='<p>• '+(hi()?'कोई अंक अनुपस्थित नहीं है।':'No number is missing.')+'</p>';
+ rep.forEach(function(n){o+='<p>• <b>'+n+'</b> '+(hi()?c.cnt[n]+' बार: इसके गुण प्रबल हो सकते हैं; संतुलन बनाए रखें।':'appears '+c.cnt[n]+' times: its qualities may be strong; keep a balance.')+'</p>'});
+ return o+'<p class="mu">'+(hi()?'उपाय केवल सुरक्षित आदतें हैं (मंत्र, ध्यान, दान, अच्छी आदतें)। महँगे रत्न या डराने वाले उपाय की आवश्यकता नहीं।':'Remedies are only safe habits (mantra, meditation, charity, good habits). No expensive stones or fear-based remedies are needed.')+'</p></div>'}
+function yearHtml(full){
+ var y0=new Date().getFullYear(),o='<div class="card"><h3>'+(hi()?'वर्ष-वार मार्गदर्शन (व्यक्तिगत वर्ष)':'Year-wise guidance (Personal Year)')+'</h3><div class="scroll"><table><tr><th>'+(hi()?'वर्ष':'Year')+'</th><th>'+(hi()?'अंक':'No.')+'</th><th>'+(hi()?'विषय':'Theme')+'</th></tr>';
+ for(var i=0;i<10;i++){var y=y0+i,n=pyear(y);o+='<tr><td>'+y+'</td><td><b>'+n+'</b></td><td>'+i18(KW[n])+'</td></tr>'}
+ o+='</table></div></div>';
+ var cnt=full?3:2;
+ for(var j=0;j<cnt;j++){var yy=y0+j,nn=pyear(yy),d=PY[nn];
+  o+='<div class="card"><h3>'+yy+' — '+(hi()?'व्यक्तिगत वर्ष ':'Personal Year ')+nn+'</h3><p>'+(hi()?'ध्यान: ':'Focus: ')+i18(d[0])+'.</p><p>'+(hi()?'सावधानी: ':'Be careful: ')+i18(d[1])+'.</p><p>'+(hi()?'सुझाव: ':'Suggestion: ')+i18(d[2])+'.</p></div>'}
+ var py=pyear(y0),mo=hi()?['जन','फ़र','मार्च','अप्रै','मई','जून','जुला','अग','सित','अक्टू','नव','दिस']:['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+ o+='<div class="card"><h3>'+y0+' — '+(hi()?'मासिक संकेत':'Monthly indications')+'</h3><div class="grid" style="grid-template-columns:repeat(4,1fr)">'+mo.map(function(m,k){var n=red9(py+k+1);return '<div class="tile"><b>'+n+'</b>'+m+'<div class="mu">'+i18(KW[n])+'</div></div>'}).join('')+'</div></div>';
+ return o+'<div class="mu">'+(hi()?'व्यक्तिगत वर्ष = जन्म का दिन + जन्म का महीना + वर्ष, जोड़कर एक अंक। ये सामान्य संकेत हैं, निश्चित भविष्यवाणी नहीं।':'Personal Year = birth day + birth month + year, reduced to one digit. These are general indications, not certain predictions.')+'</div>'}
+function remedyHtml(c){
+ var a=NP[c.mulank],b=NP[c.bhagyank];
+ var list=hi()?['अपने शुभ दिन पर ज़रूरतमंद को भोजन या वस्त्र दान करें','अपने मंत्र का शांत मन से जप करें (11 बार पर्याप्त है)','रोज़ 10 मिनट मौन ध्यान या प्राणायाम करें','सुबह जल्दी उठने और समय पर काम पूरे करने की आदत बनाएँ','हर सप्ताह किसी को धन्यवाद या मदद दें']:['Donate food or clothes to someone in need on your lucky day','Chant your mantra calmly (11 times is enough)','Do 10 minutes of silent meditation or breathing daily','Build the habit of waking early and finishing tasks on time','Thank or help someone every week'];
+ return '<div class="card"><h3>'+(hi()?'सरल, सुरक्षित उपाय':'Simple, safe remedies')+'</h3><p class="mu">'+(hi()?'शुभ दिन: ':'Lucky days: ')+i18(a[1])+', '+i18(b[1])+'</p>'+list.map(function(x){return '<p>• '+x+'</p>'}).join('')+'</div>'}
+var _n=V.num;
+V.num=function(){
+ var c=core();
+ return _n()+luckyHtml(c)+loshuHtml(c)+yearHtml(false)+remedyHtml(c)+'<button class="pri noprint" onclick="go(\'numreport\')">📜 '+(hi()?'पूरी अंकज्योतिष रिपोर्ट (PDF)':'Full numerology report (PDF)')+'</button>'};
+V.numreport=function(){
+ var c=core(),rows=[[hi()?'जीवन पथ':'Life Path',c.life],[hi()?'भाग्य/अभिव्यक्ति':'Destiny / Expression',c.dest],[hi()?'मूलांक (जन्म संख्या)':'Birth number (Mulank)',c.mulank],[hi()?'भाग्यांक':'Bhagyank',c.bhagyank],[hi()?'नाम संख्या':'Name number',c.first]];
+ return '<h2>'+(hi()?'अंकज्योतिष रिपोर्ट':'Numerology Report')+'</h2><div class="card"><b>'+U.name+'</b><div class="mu">'+U.dob+'</div></div>'+
+ '<div class="card"><h3>'+(hi()?'मुख्य अंक':'Core numbers')+'</h3>'+rows.map(function(r){return '<p><b>'+r[0]+': '+r[1]+'</b><br><span class="mu">'+(hi()?'परंपरा में इसे ':'Traditionally linked with ')+i18(NI[r[1]])+(hi()?' से जोड़ा जाता है।':'.')+'</span></p>'}).join('')+'</div>'+
+ luckyHtml(c)+loshuHtml(c)+yearHtml(true)+remedyHtml(c)+'<div class="card mu">'+t('disc')+'</div><button class="pri noprint" onclick="window.print()">🖨️ '+(hi()?'PDF सेव / प्रिंट':'Save as PDF / Print')+'</button>'};
+draw();
+})();
