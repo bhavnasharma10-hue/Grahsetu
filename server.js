@@ -175,3 +175,4 @@ const PUB = ['index.html', 'manifest.webmanifest', 'sw.js', 'icon.svg', 'icon-19
 app.get('/', (_req, res) => res.sendFile(require('path').join(__dirname, 'index.html')));
 app.get('/:f', (req, res, next) => PUB.includes(req.params.f) ? res.sendFile(require('path').join(__dirname, req.params.f)) : next());
 app.listen(PORT, () => console.log(`Grahsetu API on :${PORT} (${NODE_ENV})`));
+require('./kundli')(app);
